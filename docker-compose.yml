@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  unijadvalbot:
+    build: .
+    container_name: unijadval_bot
+    restart: unless-stopped
+    volumes:
+      - ./data:/app/data
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - ADMIN_ID=${ADMIN_ID}
+      - DATABASE_FILE=/app/data/schedules.db
+      - SCHEDULE_TIME=${SCHEDULE_TIME:-07:30}
+      - TZ=Asia/Tashkent
