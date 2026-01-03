@@ -9,6 +9,16 @@
 
 ---
 
+## 🚀 Tezkor Deploy (Railway)
+
+Eng oson yo'l — Railway orqali bepul serverga joylash:
+
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/new?template=https://github.com/islombek4642/UniJadvalBot&envs=BOT_TOKEN,ADMIN_ID&optionalEnvs=SCHEDULE_TIME,DATABASE_FILE)
+
+> **⚠️ Muhim Eslatma**: Railway (va boshqa bulutli xizmatlar) `sqlite` fayllarni har safar perezagruzka bo'lganda o'chirib yuborishi mumkin. Ma'lumotlar yo'qolmasligi uchun Railway-da **Volume** ulang yoki shunchaki test uchun ishlating.
+
+---
+
 ## 🔥 Asosiy Imkoniyatlar
 
 - 🗣 **Ko'p tilli**: O'zbek (lotin) va Ingliz tillarini qo'llab-quvvatlaydi.
