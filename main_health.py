@@ -134,7 +134,7 @@ async def web_main():
     scheduler = setup_scheduler(bot)
     scheduler.start()
 
-    # Create aiohttp app
+    # Create aiohttp app FIRST
     app = web.Application()
     app['dp'] = dp
     app['bot'] = bot
@@ -143,20 +143,18 @@ async def web_main():
     app.router.add_get('/', health_check)
     app.router.add_get('/health', health_check)
     
+    # Start web server FIRST
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, '0.0.0.0', int(os.getenv('PORT', 8080)))
+    await site.start()
+    
+    logger.info(f"Web server started on port {os.getenv('PORT', 8080)}")
     logger.info("Bot is running with web server...")
     
-    # Start bot polling in background
-    polling_task = asyncio.create_task(dp.start_polling(bot))
-    
     try:
-        # Start web server
-        runner = web.AppRunner(app)
-        await runner.setup()
-        site = web.TCPSite(runner, '0.0.0.0', int(os.getenv('PORT', 8080)))
-        await site.start()
-        
-        # Wait for polling
-        await polling_task
+        # Start bot polling AFTER web server
+        await dp.start_polling(bot)
     except Exception as e:
         logger.error(f"An error occurred: {e}")
     finally:
@@ -165,8 +163,5 @@ async def web_main():
         await bot.session.close()
 
 if __name__ == "__main__":
-    # Check if we should run web version
-    if os.getenv('PORT'):
-        asyncio.run(web_main())
-    else:
-        asyncio.run(main())
+    # Always use web mode for Sliplane
+    asyncio.run(web_main())
