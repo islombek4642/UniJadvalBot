@@ -58,7 +58,15 @@ async def set_bot_profile(bot: Bot):
 
 async def health_check(request):
     """Health check endpoint for Sliplane"""
-    return web.Response(text="UniJadval Bot is running! 🚀")
+    return web.Response(text="UniJadval Bot is running! 🚀", status=200)
+
+def run_web_server():
+    """Run web server in separate thread"""
+    app = web.Application()
+    app.router.add_get('/', health_check)
+    app.router.add_get('/health', health_check)
+    
+    web.run_app(app, host='0.0.0.0', port=int(os.getenv('PORT', 8080)))
 
 async def main():
     logger.info("Starting UniJadval Bot (Polling + Health Check)...")
@@ -88,25 +96,16 @@ async def main():
 
     logger.info("Bot is polling...")
     
-    # Create aiohttp app for health check
-    app = web.Application()
-    app.router.add_get('/', health_check)
-    app.router.add_get('/health', health_check)
+    # Start web server in background thread
+    import threading
+    web_thread = threading.Thread(target=run_web_server, daemon=True)
+    web_thread.start()
     
-    # Start bot polling in background
-    polling_task = asyncio.create_task(dp.start_polling(bot))
-    
-    # Start web server for health check
-    runner = web.AppRunner(app)
-    await runner.setup()
-    site = web.TCPSite(runner, '0.0.0.0', int(os.getenv('PORT', 8080)))
-    await site.start()
-    
-    logger.info("Bot is running with polling and health check on port 8080")
+    logger.info(f"Health check server started on port {os.getenv('PORT', 8080)}")
     
     try:
-        # Wait for polling to complete
-        await polling_task
+        # Start bot polling
+        await dp.start_polling(bot)
     except Exception as e:
         logger.error(f"An error occurred during polling: {e}")
     finally:
