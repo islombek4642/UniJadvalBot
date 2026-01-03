@@ -14,6 +14,8 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from handlers.admin import router as admin_router
 from database import init_db
 from scheduler import setup_scheduler
+from aiohttp import web
+import asyncio
 
 # Configure logging
 logging.basicConfig(
