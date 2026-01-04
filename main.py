@@ -11,11 +11,10 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.client.default import DefaultBotProperties
 from aiogram.fsm.storage.memory import MemoryStorage
 
-from handlers.admin import router as admin_router
+# Import the main router from the new handlers package
+from handlers import router as main_router
 from database import init_db
 from scheduler import setup_scheduler
-from aiohttp import web
-import asyncio
 
 # Configure logging
 logging.basicConfig(
@@ -24,8 +23,6 @@ logging.basicConfig(
     stream=sys.stdout
 )
 logger = logging.getLogger(__name__)
-
-load_dotenv()
 
 async def set_commands(bot: Bot):
     # Default commands for UNREGISTERED users in private chats
@@ -77,8 +74,8 @@ async def main():
     await set_commands(bot)
     await set_bot_profile(bot)
 
-    # Register routers
-    dp.include_router(admin_router)
+    # Register routers (using new modular handlers package)
+    dp.include_router(main_router)
 
     # Setup scheduler
     scheduler = setup_scheduler(bot)

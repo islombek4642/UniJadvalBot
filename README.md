@@ -1,80 +1,110 @@
 # 🎓 UniJadval Bot
 
-![Python](https://img.shields.io/badge/Python-3.10%2B-blue?style=for-the-badge&logo=python)
+![Python](https://img.shields.io/badge/Python-3.11%2B-blue?style=for-the-badge&logo=python)
 ![Aiogram](https://img.shields.io/badge/Aiogram-3.x-2CA5E0?style=for-the-badge&logo=telegram)
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
-**UniJadval Bot** — guruhlarda dars jadvallarini avtomatik yuborib turuvchi zamonaviy Telegram boti. U asosan talabalar va o'quv markazlari uchun mo'ljallangan bo'lib, har kuni belgilangan vaqtda guruhga dars jadvalini eslatib turadi.
+**UniJadval Bot** — guruhlarda dars jadvallarini avtomatik yuborib turuvchi Telegram boti. Talabalar va o'quv markazlari uchun mo'ljallangan.
 
 ---
 
-## 🚀 Tezkor Deploy (Railway)
+## 🚀 Tezkor O'rnatish
 
-Eng oson yo'l — Railway orqali bepul serverga joylash:
+```bash
+# 1. Loyihani yuklab olish
+git clone https://github.com/islombek4642/UniJadvalBot.git
+cd UniJadvalBot
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/new?template=https://github.com/islombek4642/UniJadvalBot&envs=BOT_TOKEN,ADMIN_ID&optionalEnvs=SCHEDULE_TIME,DATABASE_FILE)
+# 2. Konfiguratsiya
+cp .env.example .env
+# .env faylini tahrirlang (BOT_TOKEN va ADMIN_ID)
 
-> **⚠️ Muhim Eslatma**: Railway (va boshqa bulutli xizmatlar) `sqlite` fayllarni har safar perezagruzka bo'lganda o'chirib yuborishi mumkin. Ma'lumotlar yo'qolmasligi uchun Railway-da **Volume** ulang yoki shunchaki test uchun ishlating.
+# 3. Ishga tushirish
+python run.py
+```
 
 ---
 
 ## 🔥 Asosiy Imkoniyatlar
 
-- 🗣 **Ko'p tilli**: O'zbek (lotin) va Ingliz tillarini qo'llab-quvvatlaydi.
-- 📅 **Jadvalni Avtomatlashtirish**: Guruh adminlari jadval rasmini yuklaydi va bot uni har kuni (masalan, 07:30 da) guruhga yuboradi.
-- 🛑 **Weekend Mode**: "Dam olish kuni" rejimi. Guruhlarda Shanba va Yakshanba kunlari jadval yuborilmasligini sozlash mumkin.
-- 🌍 **Public vs Private**: Bot guruhdagi username (link) bor yoki yo'qligini avtomatik aniqlaydi va admin panelda 🌐 (Ochiq) yoki 🔒 (Yopiq) belgisini ko'rsatadi.
-- 📊 **Kengaytirilgan Statistika**: Admin uchun to'liq hisobot: foydalanuvchilar, faol jadvallar va umumiy guruhlar soni.
-- 📢 **Global Broadcast**: Barcha foydalanuvchi va guruhlarga xabar yuborish imkoniyati (FSM va xavfsizlik tasdiqlari bilan).
-- 🐳 **Docker Ready**: Ishga tushirish uchun to'liq Docker va Docker Compose qo'llab-quvvatlovi.
+| Imkoniyat | Tavsif |
+| :--- | :--- |
+| 🌐 **Ko'p tilli** | O'zbek va Ingliz tillarini qo'llab-quvvatlaydi |
+| 📅 **Avto-jadval** | Har kuni belgilangan vaqtda jadval yuboradi |
+| ⏰ **Moslashuvchan vaqt** | Har bir guruh uchun alohida vaqt sozlash |
+| 🛑 **Weekend Mode** | Shanba/Yakshanba kunlari jadval yubormaslik |
+| 📊 **Statistika** | Foydalanuvchilar va guruhlar hisoboti |
+| 📢 **Broadcast** | Barcha foydalanuvchilarga xabar yuborish |
 
 ---
 
-## 🛠 O'rnatish va Ishga Tushirish
+## 📁 Loyiha Tuzilishi
 
-### 1. Talablar
-
-- Python 3.10+
-- Git
-
-### 2. Loyihani yuklab olish
-
-```bash
-git clone https://github.com/islombek4642/UniJadvalBot.git
-cd UniJadvalBot
+```text
+UniJadvalBot/
+├── main.py              # Bot entry point
+├── database.py          # SQLite database operations
+├── scheduler.py         # Daily broadcast scheduler
+├── run.py               # Quick start script
+├── handlers/
+│   ├── __init__.py      # Router aggregation
+│   ├── common.py        # Shared keyboards & utilities
+│   ├── start.py         # /start, /cancel, contact
+│   ├── schedule.py      # /set_schedule, /set_time
+│   ├── settings.py      # /set_language, /weekend_mode
+│   ├── admin_panel.py   # /stats, users, groups
+│   ├── broadcast.py     # Broadcast feature
+│   └── events.py        # Bot added/removed events
+├── constants/
+│   └── messages.py      # Localization (UZ/EN)
+├── utils/
+│   └── admin_check.py   # Admin verification
+├── tests/
+│   └── test_database.py # Automated tests
+└── deploy/              # Docker & systemd configs
 ```
 
-### 3. Konfiguratsiya (.env)
+---
 
-`.env.example` faylidan nusxa oling va `.env` deb nomlang:
+## 🛠 Konfiguratsiya
 
-```bash
-cp .env.example .env
-```
-
-Fayl ichini o'zingizga moslang:
+`.env` fayli:
 
 ```ini
 BOT_TOKEN=123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11
 ADMIN_ID=998877665
-DATABASE_FILE=schedules.db
 SCHEDULE_TIME=07:30
+TIMEZONE=Asia/Tashkent
+DATABASE_FILE=schedules.db
 ```
 
-### 4. Ishga tushirish (Metod 1: Python)
+---
 
-Botni tezkor ishga tushirish uchun tayyor skriptdan foydalaning:
+## 📖 Buyruqlar
 
-```bash
-python run.py
-```
+### 👥 Guruh Adminlari Uchun
 
-*Bu skript avtomatik virtual muhit yaratadi, kutubxonalarni o'rnatadi va botni ishga tushiradi.*
+| Buyruq | Tavsif |
+| :--- | :--- |
+| `/set_schedule` | Jadval rasmini yuklash |
+| `/set_time HH:MM` | Yuborish vaqtini o'zgartirish |
+| `/weekend_mode` | Dam olish kunlari rejimini yoqish/o'chirish |
+| `/set_language` | Bot tilini o'zgartirish |
+| `/help` | Yordam |
 
-### 5. Ishga tushirish (Metod 2: Docker) 🐳
+### 👨‍💻 Bot Admini Uchun (PM)
 
-Eng qulay va tavsiya etilgan usul:
+| Tugma | Tavsif |
+| :--- | :--- |
+| 📊 Statistika | Foydalanuvchilar va guruhlar soni |
+| 📢 Broadcast | Hammaga xabar yuborish |
+| 👥 Guruhlar | Barcha guruhlar ro'yxati |
+| 👤 Foydalanuvchilar | Ro'yxatdan o'tganlar |
+
+---
+
+## 🐳 Docker bilan Ishga Tushirish
 
 ```bash
 docker-compose up -d --build
@@ -82,43 +112,19 @@ docker-compose up -d --build
 
 ---
 
-## 📖 Foydalanish Qo'llanmasi
+## 🧪 Testlarni Ishga Tushirish
 
-### 👥 Guruh Adminlari Uchun
-
-Botni guruhga qo'shing va **Admin** huquqini bering. Keyin quyidagi buyruqlarni ishlata olasiz:
-
-| Buyruq | Tavsif |
-| :--- | :--- |
-| `/set_schedule` | Jadval rasmini yuklash (reply in photo). |
-| `/set_time HH:MM` | Jadval yuboriladigan vaqtni o'zgartirish (masalan: `/set_time 08:00`). |
-| `/weekend_mode` | Dam olish kunlari (Shanba, Yakshanba) jadval yuborishni yoqish/o'chirish. |
-| `/set_language` | Bot tilini o'zgartirish (UZ/EN). |
-
-### 👨‍💻 Bot Admini (Owner) Uchun
-
-Bot egasi shaxsiy yozishmada (PM) quyidagi imkoniyatlarga ega:
-
-- **📊 Statistika**: Foydalanuvchilar, faol jadvallar va jami guruhlar sonini ko'rish.
-- **📢 Broadcast**: Barcha guruh va foydalanuvchilarga xabar tarqatish.
-- **👥 Guruhlar Ro'yxati**: Bot qo'shilgan barcha guruhlarni ko'rish (Public 🌐 va Private 🔒 ajratilgan holda).
-- **Tozalash**: Bot guruhdan chiqarilsa, baza avtomatik tozalanadi.
-
----
-
-## 🤝 Hissa Qo'shish (Contributing)
-
-1. Fork qiling.
-2. Yangi branch oching (`git checkout -b feature/NewFeature`).
-3. O'zgarishlarni commiting (`git commit -m 'Add new feature'`).
-4. Push qiling (`git push origin feature/NewFeature`).
-5. Pull Request yuboring.
+```bash
+pip install pytest
+python -m pytest tests/ -v
+```
 
 ---
 
 ## 📞 Aloqa
 
-Savollar yoki takliflar bo'lsa, muallif bilan bog'laning.
+Savollar yoki takliflar bo'lsa: [@islombek4642](https://t.me/islombek4642)
 
 ---
-*Developed with ❤️ by @islombek4642*
+
+### Developed with ❤️ by @islombek4642

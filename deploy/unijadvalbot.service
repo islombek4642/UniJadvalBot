@@ -3,18 +3,14 @@ Description=UniJadval Telegram Bot
 After=network.target
 
 [Service]
-# Change this to your username
+Type=simple
 User=root
-# Change this to the directory where you cloned the bot
 WorkingDirectory=/opt/unijadvalbot
-# Path to python executable (ideally in a venv)
 ExecStart=/opt/unijadvalbot/venv/bin/python main.py
 Restart=always
 RestartSec=10
-# Environment variables using .env file
+Environment=PYTHONUNBUFFERED=1
 EnvironmentFile=/opt/unijadvalbot/.env
-# Or explicit variables
-# Environment=PYTHONUNBUFFERED=1
 
 [Install]
 WantedBy=multi-user.target

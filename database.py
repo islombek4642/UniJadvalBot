@@ -59,6 +59,11 @@ def init_db():
         cursor.execute("ALTER TABLE schedules ADD COLUMN group_title TEXT DEFAULT ''")
         logger.info("Database migration: added 'group_title' column.")
 
+    # Migration: Add last_sent_date to prevent duplicate sends
+    if 'last_sent_date' not in columns:
+        cursor.execute("ALTER TABLE schedules ADD COLUMN last_sent_date TEXT DEFAULT ''")
+        logger.info("Database migration: added 'last_sent_date' column for duplicate prevention.")
+
     # Migration: Remove updated_at column if it exists (as it's removed from CREATE TABLE)
     if 'updated_at' in columns:
         # SQLite does not support dropping columns directly in older versions,
@@ -87,6 +92,12 @@ def init_db():
     if 'type' not in group_columns:
         cursor.execute("ALTER TABLE groups ADD COLUMN type TEXT DEFAULT 'supergroup'")
         logger.info("Database migration: added 'type' column to groups.")
+
+    # Create indexes for better query performance
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_schedules_broadcast_time ON schedules(broadcast_time)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_schedules_file_id ON schedules(file_id)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_schedules_last_sent ON schedules(last_sent_date)")
+    logger.info("Database indexes created/verified.")
 
     conn.commit()
     conn.close()
@@ -144,9 +155,6 @@ def delete_schedule(chat_id):
         conn.commit()
         conn.close()
         logger.info(f"Schedule deleted for chat_id: {chat_id}")
-    except Exception as e:
-        logger.error(f"Error deleting schedule for {chat_id}: {e}")
-
     except Exception as e:
         logger.error(f"Error deleting schedule for {chat_id}: {e}")
 
@@ -360,6 +368,119 @@ def get_paginated_groups(limit, offset):
     except Exception as e:
         logger.error(f"Error fetching paginated groups: {e}")
         return []
+
+
+def migrate_chat_id(old_chat_id: int, new_chat_id: int):
+    """
+    Handle Telegram chat migration (group → supergroup).
+    Updates chat_id in all tables when Telegram changes the ID.
+    """
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        
+        # Update schedules table
+        cursor.execute("UPDATE schedules SET chat_id = ? WHERE chat_id = ?", (new_chat_id, old_chat_id))
+        schedules_updated = cursor.rowcount
+        
+        # Update groups table
+        cursor.execute("UPDATE groups SET chat_id = ? WHERE chat_id = ?", (new_chat_id, old_chat_id))
+        groups_updated = cursor.rowcount
+        
+        conn.commit()
+        conn.close()
+        logger.info(f"Migrated chat_id from {old_chat_id} to {new_chat_id} (schedules: {schedules_updated}, groups: {groups_updated})")
+    except Exception as e:
+        logger.error(f"Error migrating chat_id from {old_chat_id} to {new_chat_id}: {e}")
+
+
+def get_schedules_due_now(current_time: str, current_date: str, is_weekend: bool):
+    """
+    Get schedules that are due to be sent right now.
+    Uses indexes for efficient querying.
+    Excludes schedules already sent today and those with weekend mode on weekends.
+    """
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        
+        if is_weekend:
+            # On weekends, exclude groups with weekend_mode enabled
+            cursor.execute("""
+                SELECT chat_id, file_id, language 
+                FROM schedules 
+                WHERE broadcast_time = ? 
+                AND file_id != '' 
+                AND (last_sent_date != ? OR last_sent_date = '' OR last_sent_date IS NULL)
+                AND weekend_mode = 0
+            """, (current_time, current_date))
+        else:
+            cursor.execute("""
+                SELECT chat_id, file_id, language 
+                FROM schedules 
+                WHERE broadcast_time = ? 
+                AND file_id != '' 
+                AND (last_sent_date != ? OR last_sent_date = '' OR last_sent_date IS NULL)
+            """, (current_time, current_date))
+        
+        results = cursor.fetchall()
+        conn.close()
+        return results
+    except Exception as e:
+        logger.error(f"Error getting due schedules: {e}")
+        return []
+
+
+def get_default_schedules_due(default_time: str, current_time: str, current_date: str, is_weekend: bool):
+    """
+    Get schedules without custom time that should use default time.
+    """
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        
+        if current_time != default_time:
+            conn.close()
+            return []
+        
+        if is_weekend:
+            cursor.execute("""
+                SELECT chat_id, file_id, language 
+                FROM schedules 
+                WHERE (broadcast_time = '' OR broadcast_time IS NULL)
+                AND file_id != '' 
+                AND (last_sent_date != ? OR last_sent_date = '' OR last_sent_date IS NULL)
+                AND weekend_mode = 0
+            """, (current_date,))
+        else:
+            cursor.execute("""
+                SELECT chat_id, file_id, language 
+                FROM schedules 
+                WHERE (broadcast_time = '' OR broadcast_time IS NULL)
+                AND file_id != '' 
+                AND (last_sent_date != ? OR last_sent_date = '' OR last_sent_date IS NULL)
+            """, (current_date,))
+        
+        results = cursor.fetchall()
+        conn.close()
+        return results
+    except Exception as e:
+        logger.error(f"Error getting default time schedules: {e}")
+        return []
+
+
+def mark_schedule_sent(chat_id: int, sent_date: str):
+    """
+    Mark a schedule as sent for today to prevent duplicate sends.
+    """
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("UPDATE schedules SET last_sent_date = ? WHERE chat_id = ?", (sent_date, chat_id))
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        logger.error(f"Error marking schedule sent for {chat_id}: {e}")
 
 
 if __name__ == "__main__":

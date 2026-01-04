@@ -27,7 +27,6 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Quick scripts
-clean_handlers.py
-fix_handlers.py
-test_db.py
+# Testing
+.pytest_cache/
+tests/__pycache__/
