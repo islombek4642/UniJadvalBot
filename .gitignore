@@ -11,6 +11,7 @@ env/
 
 # Environment Variables (CRITICAL)
 .env
+*.pem
 
 # Database
 *.db

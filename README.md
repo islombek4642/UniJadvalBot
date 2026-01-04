@@ -28,14 +28,14 @@ python run.py
 
 ## 🔥 Asosiy Imkoniyatlar
 
-| Imkoniyat | Tavsif |
-| :--- | :--- |
-| 🌐 **Ko'p tilli** | O'zbek va Ingliz tillarini qo'llab-quvvatlaydi |
-| 📅 **Avto-jadval** | Har kuni belgilangan vaqtda jadval yuboradi |
-| ⏰ **Moslashuvchan vaqt** | Har bir guruh uchun alohida vaqt sozlash |
-| 🛑 **Weekend Mode** | Shanba/Yakshanba kunlari jadval yubormaslik |
-| 📊 **Statistika** | Foydalanuvchilar va guruhlar hisoboti |
-| 📢 **Broadcast** | Barcha foydalanuvchilarga xabar yuborish |
+| Imkoniyat                      | Tavsif                                         |
+| :----------------------------- | :--------------------------------------------- |
+| 🌐**Ko'p tilli**         | O'zbek va Ingliz tillarini qo'llab-quvvatlaydi |
+| 📅**Avto-jadval**        | Har kuni belgilangan vaqtda jadval yuboradi    |
+| ⏰**Moslashuvchan vaqt** | Har bir guruh uchun alohida vaqt sozlash       |
+| 🛑**Weekend Mode**       | Shanba/Yakshanba kunlari jadval yubormaslik    |
+| 📊**Statistika**         | Foydalanuvchilar va guruhlar hisoboti          |
+| 📢**Broadcast**          | Barcha foydalanuvchilarga xabar yuborish       |
 
 ---
 
@@ -85,22 +85,22 @@ DATABASE_FILE=schedules.db
 
 ### 👥 Guruh Adminlari Uchun
 
-| Buyruq | Tavsif |
-| :--- | :--- |
-| `/set_schedule` | Jadval rasmini yuklash |
-| `/set_time HH:MM` | Yuborish vaqtini o'zgartirish |
-| `/weekend_mode` | Dam olish kunlari rejimini yoqish/o'chirish |
-| `/set_language` | Bot tilini o'zgartirish |
-| `/help` | Yordam |
+| Buyruq              | Tavsif                                      |
+| :------------------ | :------------------------------------------ |
+| `/set_schedule`   | Jadval rasmini yuklash                      |
+| `/set_time HH:MM` | Yuborish vaqtini o'zgartirish               |
+| `/weekend_mode`   | Dam olish kunlari rejimini yoqish/o'chirish |
+| `/set_language`   | Bot tilini o'zgartirish                     |
+| `/help`           | Yordam                                      |
 
 ### 👨‍💻 Bot Admini Uchun (PM)
 
-| Tugma | Tavsif |
-| :--- | :--- |
-| 📊 Statistika | Foydalanuvchilar va guruhlar soni |
-| 📢 Broadcast | Hammaga xabar yuborish |
-| 👥 Guruhlar | Barcha guruhlar ro'yxati |
-| 👤 Foydalanuvchilar | Ro'yxatdan o'tganlar |
+| Tugma               | Tavsif                            |
+| :------------------ | :-------------------------------- |
+| 📊 Statistika       | Foydalanuvchilar va guruhlar soni |
+| 📢 Broadcast        | Hammaga xabar yuborish            |
+| 👥 Guruhlar         | Barcha guruhlar ro'yxati          |
+| 👤 Foydalanuvchilar | Ro'yxatdan o'tganlar              |
 
 ---
 
@@ -123,7 +123,7 @@ python -m pytest tests/ -v
 
 ## 📞 Aloqa
 
-Savollar yoki takliflar bo'lsa: [@islombek4642](https://t.me/islombek4642)
+Savollar yoki takliflar bo'lsa: [@xamidullayev_i](https://t.me/xamidullayev_i)
 
 ---
 
